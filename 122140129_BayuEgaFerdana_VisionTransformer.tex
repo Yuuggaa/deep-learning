@@ -1,0 +1,855 @@
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%% Credit %%%%%%%%%%%%%%%%%%%%%%%%
+
+% template ini dibuat oleh martin.manullang@if.itera.ac.id untuk dipergunakan oleh seluruh sivitas akademik itera.
+
+%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGE starts HERE %%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage[expansion=false]{microtype}
+\captionsetup[table]{name=Tabel}
+\captionsetup[figure]{name=Gambar}
+\usepackage{tabulary}
+\usepackage{fancyhdr}
+\usepackage{placeins}
+\usepackage[all]{xy}
+\usepackage{tikz}
+\usepackage{verbatim}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=2.5cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{psfrag}
+\usepackage[T1]{fontenc}
+\usepackage[scaled]{beramono}
+\usepackage{amsmath}
+% Enable inserting code into the document
+\usepackage{listings}
+\usepackage{xcolor} 
+% custom color & style for listing
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{LightGray}{gray}{0.9}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{green},
+	keywordstyle=\color{codegreen},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+\renewcommand{\lstlistingname}{Kode}
+%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGE ends HERE %%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Data Diri %%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\student}{\textbf{Bayu Ega Ferdana (122140129)}}
+\newcommand{\course}{\textbf{Pembelajaran Mendalam (IF25-40305)}}
+\newcommand{\assignment}{\textbf{Perbandingan Model Vision Transformer}}
+
+%%%%%%%%%%%%%%%%%%% using theorem style %%%%%%%%%%%%%%%%%%%%
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{exa}[thm]{Example}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{coro}[thm]{Corollary}
+\newtheorem{quest}{Question}[section]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{lipsum}%% a garbage package you don't need except to create examples.
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Bayu Ega Ferdana (122140129)}
+\rhead{ \thepage}
+\cfoot{\textbf{Perbandingan Model Vision Transformer}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+%%%%%%%%%%%%%%  Shortcut for usual set of numbers  %%%%%%%%%%%
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\setlength\headheight{14pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
+\begin{document}
+\thispagestyle{empty}
+\begin{center}
+	\includegraphics[scale = 0.15]{outputs/figures/ifitera-header.png}
+	\vspace{0.1cm}
+\end{center}
+\noindent
+\rule{17cm}{0.2cm}\\[0.3cm]
+Nama: \student \hfill Tugas Ke: \assignment\\[0.1cm]
+Mata Kuliah: \course \hfill Tanggal: 22 November 2025\\
+\rule{17cm}{0.05cm}
+\vspace{0.1cm}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BODY DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\textbf{Repository:} \url{https://github.com/Yuuggaa/deep-learning.git}
+
+\section{PENDAHULUAN}
+
+\subsection{Latar Belakang}
+Vision Transformer (ViT) telah merevolusi bidang computer vision dengan mengadaptasi arsitektur Transformer yang awalnya dirancang untuk pemrosesan bahasa alami (NLP) ke domain visual \cite{dosovitskiy2021image}. Berbeda dengan Convolutional Neural Networks (CNN) seperti ResNet \cite{he2016deep} yang mengandalkan inductive bias melalui operasi konvolusi, Vision Transformer memanfaatkan mekanisme self-attention untuk menangkap dependensi jarak jauh antar patch gambar secara global. Pendekatan ini terbukti sangat efektif ketika dilatih dengan dataset berskala besar seperti ImageNet \cite{deng2009imagenet}, bahkan melampaui performa CNN state-of-the-art.
+
+Keberhasilan ViT memicu perkembangan berbagai varian arsitektur, termasuk Swin Transformer yang memperkenalkan hierarchical feature representation dengan shifted windows \cite{liu2021swin}. Masing-masing model menawarkan trade-off yang berbeda dalam hal akurasi, efisiensi komputasi, dan jumlah parameter.
+
+\subsection{Motivasi Perbandingan Model}
+Dalam konteks aplikasi praktis seperti klasifikasi makanan Indonesia, pemilihan model yang tepat sangat krusial. Swin Transformer menawarkan representasi hierarchical yang mirip CNN namun dengan kekuatan global attention, sementara Vision Transformer (ViT) Base menggunakan pure transformer architecture dengan global attention mechanism. Memahami performa relatif kedua model ini pada dataset Indonesian Food dapat memberikan insight berharga untuk deployment aplikasi real-world, di mana batasan komputasi dan akurasi sama-sama penting.
+
+\subsection{Tujuan Eksperimen}
+Penelitian ini bertujuan untuk:
+\begin{itemize}
+    \item Membandingkan performa Swin Transformer Tiny dan Vision Transformer (ViT) Base pada klasifikasi 5 kelas makanan Indonesia
+    \item Menganalisis trade-off antara akurasi, jumlah parameter, dan kecepatan inferensi
+    \item Mengevaluasi kesesuaian masing-masing model untuk aplikasi klasifikasi makanan dengan batasan komputasi
+    \item Memberikan rekomendasi pemilihan model berdasarkan use case spesifik
+\end{itemize}
+
+\section{LANDASAN TEORI}
+
+\subsection{Transformer dan Self-Attention}
+Transformer adalah arsitektur neural network yang mengandalkan mekanisme self-attention untuk memproses sequential data \cite{vaswani2017attention}. Self-attention menghitung hubungan antar elemen dalam sequence dengan menggunakan tiga proyeksi linear: Query (Q), Key (K), dan Value (V). Attention weight dihitung dengan:
+
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+
+Di mana $d_k$ adalah dimensi key vector. Mekanisme ini memungkinkan model untuk menangkap dependensi jarak jauh secara efisien tanpa batasan receptive field seperti pada CNN.
+
+\subsection{Vision Transformer (ViT)}
+Vision Transformer \cite{dosovitskiy2021image} adalah implementasi murni dari Transformer architecture untuk computer vision. Karakteristik utama:
+
+\textbf{Patch Embedding:} Gambar dibagi menjadi fixed-size patches (16×16), kemudian di-flatten dan diprojeksikan ke embedding space menggunakan linear layer.
+
+\textbf{Positional Encoding:} Karena Transformer tidak memiliki inductive bias untuk spatial information, positional embeddings ditambahkan untuk memberikan informasi lokasi patch.
+
+\textbf{Global Self-Attention:} Setiap patch dapat attend ke semua patch lainnya dalam gambar, memungkinkan model menangkap long-range dependencies.
+
+\textbf{Arsitektur ViT Base:} Model yang digunakan memiliki:
+\begin{itemize}
+    \item Patch size: 16×16
+    \item Embedding dimension: 768
+    \item Number of layers: 12
+    \item Attention heads: 12
+    \item Total parameters: ~85.8 juta
+\end{itemize}
+
+\textbf{Kelebihan:}
+\begin{itemize}
+    \item Dapat menangkap global context dengan efektif
+    \item Scalable ke dataset sangat besar
+    \item Transfer learning yang sangat baik dari ImageNet
+    \item Architecture sederhana dan elegant
+\end{itemize}
+
+\textbf{Kekurangan:}
+\begin{itemize}
+    \item Memerlukan dataset besar untuk training from scratch
+    \item Computational complexity $O(n^2)$ untuk self-attention
+    \item Kurang efisien untuk gambar beresolusi sangat tinggi
+    \item Tidak memiliki hierarchical features seperti CNN
+\end{itemize}
+
+\subsection{Swin Transformer}
+Swin Transformer (Shifted Window Transformer) \cite{liu2021swin} memperkenalkan pendekatan hierarchical untuk Vision Transformer. Arsitektur ini memiliki beberapa karakteristik kunci:
+
+\textbf{Hierarchical Feature Maps:} Swin menggunakan patch merging untuk membuat feature maps dengan resolusi berbeda (seperti piramida pada CNN), memungkinkan model menangkap informasi multi-scale.
+
+\textbf{Shifted Window Attention:} Alih-alih menghitung global attention, Swin membatasi attention pada windows lokal yang bergeser antar layer. Ini mengurangi kompleksitas komputasi dari $O(n^2)$ menjadi $O(n)$ dimana $n$ adalah jumlah patch.
+
+\textbf{Arsitektur Swin Tiny:} Model yang digunakan memiliki:
+\begin{itemize}
+    \item Patch size: 4×4
+    \item Window size: 7×7
+    \item Embedding dimension: 96
+    \item Number of layers: 4 stages
+    \item Total parameters: ~27.5 juta
+\end{itemize}
+
+\textbf{Kelebihan:}
+\begin{itemize}
+    \item Efisien untuk gambar resolusi tinggi (kompleksitas linear)
+    \item Hierarchical representation cocok untuk dense prediction tasks
+    \item Window-based attention memberikan inductive bias yang baik
+    \item Balance antara local dan global information
+\end{itemize}
+
+\textbf{Kekurangan:}
+\begin{itemize}
+    \item Arsitektur lebih kompleks dibanding pure ViT
+    \item Shifted window mechanism menambah complexity implementasi
+    \item Hyperparameter tuning lebih challenging (window size, shift size, dll)
+\end{itemize}
+
+\subsection{Perbedaan Kunci}
+\begin{table}[h]
+\caption{Perbandingan Teoritis Swin Transformer vs ViT}
+\label{tab:theory-comparison}
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Aspek} & \textbf{Swin Transformer} & \textbf{ViT Base} \\ \hline
+Attention Mechanism & Shifted Window (Local) & Global Attention \\ \hline
+Feature Hierarchy & Hierarchical (Multi-scale) & Single-scale \\ \hline
+Patch Size & 4×4 & 16×16 \\ \hline
+Computational Complexity & O(n) linear & O(n²) quadratic \\ \hline
+Total Parameters & 27.5M & 85.8M \\ \hline
+Best Use Case & High-res images, dense tasks & Image classification \\ \hline
+\end{tabular}
+\end{table}
+
+\section{METODOLOGI}
+
+\subsection{Deskripsi Dataset}
+Dataset yang digunakan adalah Indonesian Food Dataset yang terdiri dari 5 kelas makanan khas Indonesia:
+
+\begin{itemize}
+    \item \textbf{Bakso}: Sup bola daging dengan mie dan sayuran
+    \item \textbf{Gado-gado}: Salad sayuran dengan saus kacang
+    \item \textbf{Nasi Goreng}: Nasi goreng dengan berbagai topping
+    \item \textbf{Rendang}: Daging sapi dengan bumbu rempah khas Minangkabau
+    \item \textbf{Soto Ayam}: Sup ayam kuah kuning dengan bumbu khas
+\end{itemize}
+
+Dataset memiliki karakteristik sebagai berikut:
+\begin{itemize}
+    \item Total gambar: 1,108 images untuk training
+    \item Format: JPG/JPEG dengan resolusi bervariasi
+    \item Label: Disimpan dalam file CSV (train.csv)
+    \item Sumber: Dikumpulkan dari berbagai sumber dengan variasi angle, lighting, dan background
+\end{itemize}
+
+Dataset ini menantang karena:
+\begin{itemize}
+    \item Variasi visual tinggi dalam satu kelas (contoh: rendang bisa disajikan dengan berbagai cara)
+    \item Beberapa kelas memiliki komponen visual yang overlap (contoh: nasi goreng dan nasi di soto ayam)
+    \item Variasi lighting dan background yang signifikan
+    \item Occlusion dan partial view pada beberapa gambar
+\end{itemize}
+
+\subsection{Preprocessing dan Augmentasi Data}
+Preprocessing pipeline yang diterapkan:
+
+\textbf{Training Data:}
+\begin{lstlisting}[language=Python, caption=Data Augmentation Pipeline,label={lst:augmentation}]
+transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomRotation(10),
+    transforms.ColorJitter(brightness=0.2, contrast=0.2),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                        std=[0.229, 0.224, 0.225])
+])
+\end{lstlisting}
+
+\textbf{Validation Data:}
+\begin{lstlisting}[language=Python, caption=Validation Transform,label={lst:validation}]
+transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                        std=[0.229, 0.224, 0.225])
+])
+\end{lstlisting}
+
+\subsection{Konfigurasi Training}
+\textbf{Hyperparameters:}
+\begin{itemize}
+    \item \textbf{Batch Size:} 32
+    \item \textbf{Epochs:} 10
+    \item \textbf{Learning Rate:} 1e-4
+    \item \textbf{Optimizer:} AdamW
+    \item \textbf{Weight Decay:} 0.01
+    \item \textbf{Loss Function:} CrossEntropyLoss
+\end{itemize}
+
+\textbf{Fine-tuning Strategy:}
+\begin{itemize}
+    \item Menggunakan pre-trained weights dari ImageNet-1K
+    \item Mengganti classifier head dengan Linear layer untuk 5 kelas
+    \item Fine-tuning seluruh model (tidak freeze layers)
+\end{itemize}
+
+\subsection{Library dan Framework}
+\begin{itemize}
+    \item \textbf{Python:} 3.8+
+    \item \textbf{PyTorch:} 2.0+
+    \item \textbf{timm:} 0.9.0+ (PyTorch Image Models)
+    \item \textbf{torchvision:} Latest
+    \item \textbf{scikit-learn:} Untuk metrics evaluation
+    \item \textbf{matplotlib, seaborn:} Untuk visualisasi
+    \item \textbf{pandas:} Untuk data manipulation
+\end{itemize}
+
+\subsection{Spesifikasi Hardware}
+\begin{itemize}
+    \item \textbf{GPU:} NVIDIA GeForce RTX 3050 Laptop GPU
+    \item \textbf{CUDA Version:} 11.x+
+    \item \textbf{RAM:} 16GB
+    \item \textbf{OS:} Windows 11
+\end{itemize}
+
+\subsection{Cara Pengukuran Metrik Evaluasi}
+\textbf{Accuracy:} 
+$$\text{Accuracy} = \frac{\text{Correct Predictions}}{\text{Total Predictions}}$$
+
+\textbf{Precision (per-class):}
+$$\text{Precision} = \frac{TP}{TP + FP}$$
+
+\textbf{Recall (per-class):}
+$$\text{Recall} = \frac{TP}{TP + FN}$$
+
+\textbf{F1-Score:}
+$$\text{F1} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}$$
+
+\textbf{Inference Time:}
+Diukur dengan menjalankan model pada seluruh validation dataset dan menghitung rata-rata waktu per gambar dalam milliseconds, dengan warm-up run untuk memastikan GPU telah siap.
+
+\textbf{Throughput:}
+$$\text{Throughput (img/s)} = \frac{\text{Total Images}}{\text{Total Inference Time (s)}}$$
+
+\textbf{Model Size:}
+Dihitung dari total bytes yang digunakan oleh parameter dan buffer model, dikonversi ke MB.
+
+\section{HASIL DAN ANALISIS}
+
+\subsection{Perbandingan Jumlah Parameter}
+\begin{table}[h]
+\caption{Perbandingan Jumlah Parameter dan Ukuran Model}
+\label{tab:parameters}
+\centering
+\begin{tabular}{|l|r|r|}
+\hline
+\textbf{Model} & \textbf{Total Parameters} & \textbf{Size (MB)} \\ \hline
+Swin Transformer Tiny & 27,523,199 & 106.06 \\ \hline
+Vision Transformer Base & 85,802,501 & 327.31 \\ \hline
+\textbf{Ratio (ViT/Swin)} & \textbf{3.12×} & \textbf{3.09×} \\ \hline
+\end{tabular}
+\end{table}
+
+Vision Transformer Base memiliki lebih dari 3 kali lipat parameter dibanding Swin Transformer Tiny. Perbedaan ini disebabkan oleh:
+\begin{itemize}
+    \item Embedding dimension yang lebih besar (768 vs 96)
+    \item Jumlah transformer layers yang lebih banyak (12 vs 4 stages)
+    \item Global attention mechanism yang memerlukan lebih banyak parameter
+    \item Patch size yang lebih besar (16×16 vs 4×4) namun dengan embedding dimension yang jauh lebih tinggi
+\end{itemize}
+
+\subsection{Perbandingan Metrik Performa}
+\begin{table}[h]
+\caption{Perbandingan Metrik Klasifikasi}
+\label{tab:performance}
+\centering
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\ \hline
+Swin Tiny & \textbf{99.91\%} & \textbf{99.91\%} & \textbf{99.91\%} & \textbf{99.91\%} \\ \hline
+ViT Base & \textbf{99.91\%} & \textbf{99.91\%} & \textbf{99.91\%} & \textbf{99.91\%} \\ \hline
+\textbf{Difference} & \textbf{0.00\%} & \textbf{0.00\%} & \textbf{0.00\%} & \textbf{0.00\%} \\ \hline
+\end{tabular}
+\end{table}
+
+Hasil yang mengejutkan menunjukkan bahwa kedua model mencapai performa klasifikasi yang hampir identik dengan accuracy 99.91\%. Ini mengindikasikan bahwa:
+\begin{itemize}
+    \item Dataset Indonesian Food dengan 5 kelas ini relatif mudah untuk kedua arsitektur advanced ini
+    \item Pre-trained weights dari ImageNet sangat efektif untuk transfer learning pada domain makanan
+    \item Fine-tuning 10 epoch sudah cukup untuk mencapai konvergensi optimal
+\end{itemize}
+
+\subsection{Perbandingan Waktu Inferensi}
+\begin{table}[h]
+\caption{Perbandingan Efisiensi Inferensi}
+\label{tab:inference}
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Model} & \textbf{Time/Image (ms)} & \textbf{Throughput (img/s)} & \textbf{Hardware} \\ \hline
+Swin Tiny & \textbf{5.11} & \textbf{195.62} & RTX 3050 \\ \hline
+ViT Base & 11.68 & 85.59 & RTX 3050 \\ \hline
+\textbf{Speedup (Swin)} & \textbf{2.29×} & \textbf{2.29×} & - \\ \hline
+\end{tabular}
+\end{table}
+
+Swin Transformer Tiny jauh lebih cepat (2.29× speedup) dibanding ViT Base dalam inference:
+\begin{itemize}
+    \item 5.11 ms vs 11.68 ms per gambar
+    \item 195.62 img/s vs 85.59 img/s throughput
+    \item Keunggulan ini disebabkan oleh:
+    \begin{itemize}
+        \item Jumlah parameter yang 3× lebih sedikit
+        \item Window-based attention dengan kompleksitas O(n) vs global attention O(n²)
+        \item Hierarchical architecture yang lebih efisien untuk gambar 224×224
+    \end{itemize}
+\end{itemize}
+
+\subsection{Visualisasi Kurva Learning}
+
+Dari analisis training curves dapat diamati:
+
+\textbf{Swin Transformer:}
+\begin{itemize}
+    \item Konvergensi sangat cepat, mencapai validation accuracy 99.19\% di epoch 1
+    \item Mencapai accuracy maksimal 100\% di epoch 3 dan 4
+    \item Training loss menurun konsisten dari 0.5276 → 0.0410
+    \item Validation loss sangat rendah (0.0036 di epoch terakhir)
+    \item Best model di epoch 3 dengan 100\% validation accuracy
+\end{itemize}
+
+\textbf{Vision Transformer Base:}
+\begin{itemize}
+    \item Konvergensi juga cepat, mencapai validation accuracy 91.88\% di epoch 1
+    \item Mencapai accuracy maksimal 100\% di epoch 4, 5, dan 6
+    \item Training loss menurun dari 0.5580 → 0.0350
+    \item Beberapa fluktuasi di epoch 7-9 (val acc turun ke 96.12\%)
+    \item Best model di epoch 4 dengan 100\% validation accuracy
+\end{itemize}
+
+\subsection{Confusion Matrix}
+
+Analisis confusion matrix menunjukkan:
+
+\textbf{Swin Transformer:}
+\begin{itemize}
+    \item Diagonal sangat kuat dengan minimal misclassification
+    \item Hanya 1 error: nasi\_goreng diprediksi sebagai soto\_ayam (1 dari 234 samples)
+    \item Per-class accuracy hampir sempurna untuk semua kelas
+    \item Classes dengan 100\% accuracy: bakso, gado\_gado, rendang, soto\_ayam
+\end{itemize}
+
+\textbf{Vision Transformer Base:}
+\begin{itemize}
+    \item Juga sangat akurat dengan minimal error
+    \item 2 errors total:
+    \begin{itemize}
+        \item 1 gado\_gado diprediksi sebagai bakso
+        \item 1 rendang diprediksi sebagai bakso
+    \end{itemize}
+    \item Classes dengan 100\% accuracy: bakso, nasi\_goreng, soto\_ayam
+\end{itemize}
+
+\subsection{Analisis Per-Class Metrics}
+
+\textbf{Swin Transformer - Per Class:}
+\begin{table}[h]
+\caption{Swin Transformer - Metrik Per Kelas}
+\label{tab:swin-perclass}
+\centering
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{Class} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Support} \\ \hline
+bakso & 100.00\% & 100.00\% & 100.00\% & 220 \\ \hline
+gado\_gado & 100.00\% & 100.00\% & 100.00\% & 215 \\ \hline
+nasi\_goreng & 99.57\% & 100.00\% & 99.79\% & 234 \\ \hline
+rendang & 100.00\% & 100.00\% & 100.00\% & 227 \\ \hline
+soto\_ayam & 100.00\% & 99.53\% & 99.76\% & 212 \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Vision Transformer Base - Per Class:}
+\begin{table}[h]
+\caption{ViT Base - Metrik Per Kelas}
+\label{tab:vit-perclass}
+\centering
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{Class} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Support} \\ \hline
+bakso & 100.00\% & 100.00\% & 100.00\% & 220 \\ \hline
+gado\_gado & 99.54\% & 100.00\% & 99.77\% & 215 \\ \hline
+nasi\_goreng & 100.00\% & 100.00\% & 100.00\% & 234 \\ \hline
+rendang & 100.00\% & 99.56\% & 99.78\% & 227 \\ \hline
+soto\_ayam & 100.00\% & 100.00\% & 100.00\% & 212 \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Analisis Mendalam}
+
+\subsubsection{Mengapa Kedua Model Mencapai Performa Hampir Identik?}
+\begin{enumerate}
+    \item \textbf{Dataset Characteristics:} Dataset Indonesian Food dengan 5 kelas dan ~1,100 images tidak cukup kompleks untuk membedakan capabilities superior dari arsitektur yang berbeda. Kedua model sudah "overqualified" untuk task ini.
+    
+    \item \textbf{Transfer Learning Power:} Pre-trained weights dari ImageNet-1K sangat powerful. Kedua model sudah belajar visual representations yang kaya, sehingga fine-tuning pada food dataset menjadi relatively straightforward.
+    
+    \item \textbf{Class Separability:} 5 kelas makanan Indonesia ini memiliki visual features yang cukup distinct (bakso dengan kuah, gado-gado dengan sayuran, rendang dengan texture khas, dll), sehingga mudah untuk dipisahkan.
+    
+    \item \textbf{Data Augmentation:} Augmentation yang kuat (flip, rotation, color jitter) membantu kedua model generalize dengan baik.
+\end{enumerate}
+
+\subsubsection{Trade-off Performa vs Efisiensi}
+Meskipun accuracy hampir identik, ada perbedaan signifikan dalam efisiensi:
+
+\begin{table}[h]
+\caption{Trade-off Summary}
+\label{tab:tradeoff}
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Metric} & \textbf{Swin} & \textbf{ViT} & \textbf{Winner} \\ \hline
+Accuracy & 99.91\% & 99.91\% & Tie \\ \hline
+Parameters & 27.5M & 85.8M & Swin (3.1×) \\ \hline
+Model Size & 106 MB & 327 MB & Swin (3.1×) \\ \hline
+Inference Speed & 5.11 ms & 11.68 ms & Swin (2.3×) \\ \hline
+Throughput & 195 img/s & 85 img/s & Swin (2.3×) \\ \hline
+Training Stability & Excellent & Good (fluctuations) & Swin \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Kesimpulan Trade-off:}
+\begin{itemize}
+    \item \textbf{Swin Transformer} adalah clear winner untuk production deployment
+    \item Memberikan accuracy yang sama dengan:
+    \begin{itemize}
+        \item 3.1× lebih sedikit parameter (efisiensi memori)
+        \item 2.3× lebih cepat inference (critical untuk real-time apps)
+        \item Training yang lebih stabil
+    \end{itemize}
+    \item \textbf{ViT Base} tidak memberikan keuntungan apapun meski 3× lebih besar
+\end{itemize}
+
+\subsubsection{Efficiency Metrics}
+\begin{itemize}
+    \item \textbf{Swin Efficiency Score:} 1.84 img/s per MB (195.62 img/s ÷ 106 MB)
+    \item \textbf{ViT Efficiency Score:} 0.26 img/s per MB (85.59 img/s ÷ 327 MB)
+    \item \textbf{Swin is 7× more efficient} per MB of model size
+\end{itemize}
+
+\subsubsection{Kapan ViT Base Bisa Lebih Unggul?}
+ViT Base mungkin menunjukkan keunggulan pada:
+\begin{enumerate}
+    \item Dataset yang jauh lebih besar dan kompleks (100+ kelas, 100k+ images)
+    \item Tasks yang memerlukan very long-range dependencies
+    \item Domain yang sangat berbeda dari ImageNet (medical images, satellite imagery)
+    \item Fine-grained classification dengan subtle differences antar kelas
+\end{enumerate}
+
+Namun untuk dataset Indonesian Food yang digunakan, \textbf{Swin Transformer Tiny is the optimal choice}.
+
+\section{KESIMPULAN DAN SARAN}
+
+\subsection{Kesimpulan Hasil Perbandingan}
+\begin{enumerate}
+    \item \textbf{Akurasi:} Kedua model mencapai performa klasifikasi yang hampir identik (99.91\% weighted average accuracy, precision, recall, dan F1-score).
+    
+    \item \textbf{Efisiensi Parameter:} Swin Transformer Tiny jauh lebih efisien dengan 27.5M parameters (106 MB) dibandingkan ViT Base dengan 85.8M parameters (327 MB) - 3.1× lebih kecil.
+    
+    \item \textbf{Kecepatan Inferensi:} Swin Transformer 2.3× lebih cepat (5.11 ms vs 11.68 ms per image, atau 195.62 img/s vs 85.59 img/s throughput).
+    
+    \item \textbf{Konvergensi Training:} Swin Transformer menunjukkan training yang lebih stabil dengan konvergensi cepat ke 100\% validation accuracy di epoch 3-4. ViT Base mengalami beberapa fluktuasi di epoch akhir.
+    
+    \item \textbf{Overall Efficiency:} Swin Transformer 7× lebih efisien per MB model size (1.84 vs 0.26 img/s/MB).
+    
+    \item \textbf{Hardware Compatibility:} Kedua model berjalan dengan baik pada NVIDIA RTX 3050 Laptop GPU, namun Swin memberikan throughput yang jauh lebih baik.
+\end{enumerate}
+
+\subsection{Rekomendasi Model Berdasarkan Use Case}
+
+\subsubsection{Untuk Dataset Indonesian Food atau Similar Small-Medium Datasets}
+\textbf{Rekomendasi Kuat: Swin Transformer Tiny}
+
+Alasan:
+\begin{itemize}
+    \item Accuracy yang sama dengan ViT Base (99.91\%)
+    \item 3.1× lebih kecil - cocok untuk deployment di resource-constrained environments
+    \item 2.3× lebih cepat - critical untuk real-time applications
+    \item Training lebih stabil dan predictable
+    \item Hierarchical features cocok untuk food classification (texture, color, shape di berbagai scales)
+\end{itemize}
+
+Use cases yang cocok:
+\begin{itemize}
+    \item Mobile food recognition apps
+    \item Restaurant menu scanning systems
+    \item Dietary tracking applications
+    \item Food delivery verification
+    \item Nutritional analysis tools
+\end{itemize}
+
+\subsubsection{Kapan ViT Base Bisa Dipertimbangkan}
+ViT Base hanya disarankan jika:
+\begin{enumerate}
+    \item Dataset sangat besar (100k+ images, 100+ classes)
+    \item Computational resources tidak menjadi constraint (high-end server deployment)
+    \item Task memerlukan global understanding yang very sophisticated
+    \item Transfer learning dari ViT-specific pre-trained models diperlukan
+\end{enumerate}
+
+Untuk Indonesian Food classification task, \textbf{ViT Base is overkill} dan tidak memberikan keuntungan apapun dibanding Swin Tiny.
+
+\subsubsection{Deployment Considerations}
+\begin{table}[h]
+\caption{Deployment Scenarios Recommendation}
+\label{tab:deployment}
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Scenario} & \textbf{Recommended Model} & \textbf{Reason} \\ \hline
+Mobile App & Swin Tiny & Small size, fast inference \\ \hline
+Edge Device (IoT) & Swin Tiny & Memory efficient \\ \hline
+Web API & Swin Tiny & Higher throughput \\ \hline
+Server-side Batch & Swin Tiny & Same accuracy, lower cost \\ \hline
+Research/Experiment & Either & Similar results \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Saran untuk Pengembangan Lebih Lanjut}
+\begin{enumerate}
+    \item \textbf{Model Compression untuk Swin:}
+    \begin{itemize}
+        \item Terapkan pruning untuk mengurangi parameter lebih lanjut tanpa mengorbankan accuracy
+        \item Quantization (FP32 → FP16/INT8) dapat meningkatkan speed 2-4×
+        \item Knowledge distillation dari Swin Tiny ke model yang lebih kecil (Swin Pico)
+    \end{itemize}
+    
+    \item \textbf{Dataset Expansion:}
+    \begin{itemize}
+        \item Tambah kelas makanan Indonesia lainnya (sate, martabak, rawon, dll)
+        \item Perbesar dataset dengan web scraping atau synthetic data
+        \item Collect real-world data dengan berbagai kondisi lighting dan background
+        \item Test model pada dataset makanan dari negara lain untuk generalization study
+    \end{itemize}
+    
+    \item \textbf{Multi-task Learning:}
+    \begin{itemize}
+        \item Extend untuk ingredient detection
+        \item Recipe recommendation based on recognized food
+        \item Calorie estimation
+        \item Portion size detection
+    \end{itemize}
+    
+    \item \textbf{Model Optimization Experiments:}
+    \begin{itemize}
+        \item Try Swin Tiny with different window sizes
+        \item Compare dengan Swin Base untuk melihat apakah extra parameters memberikan improvement
+        \item Experiment dengan ViT Small/Tiny untuk fair comparison
+        \item Test newer architectures (Swin V2, DINOv2, etc.)
+    \end{itemize}
+    
+    \item \textbf{Production Deployment:}
+    \begin{itemize}
+        \item Deploy Swin Tiny ke mobile app menggunakan TorchScript/ONNX
+        \item Implement A/B testing dengan real users
+        \item Monitor model drift dan retrain periodically
+        \item Implement explainability tools (Grad-CAM) untuk trust building
+    \end{itemize}
+    
+    \item \textbf{Benchmark pada Hardware Lain:}
+    \begin{itemize}
+        \item Test pada CPU untuk edge deployment scenarios
+        \item Benchmark pada mobile GPUs (Adreno, Mali)
+        \item Compare dengan specialized hardware (Google Coral TPU)
+    \end{itemize}
+    
+    \item \textbf{Advanced Training Techniques:}
+    \begin{itemize}
+        \item Implement progressive resizing (start 128×128, gradually increase to 224×224)
+        \item Try mixup/cutmix augmentation
+        \item Experiment dengan different learning rate schedules
+        \item Test test-time augmentation untuk boost accuracy lebih lanjut
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Lesson Learned}
+\begin{enumerate}
+    \item \textbf{Bigger is NOT always better:} ViT Base dengan 3× lebih banyak parameter tidak memberikan accuracy gain apapun dibanding Swin Tiny pada dataset ini. Model size harus matched dengan task complexity.
+    
+    \item \textbf{Efficiency matters in production:} Dalam deployment real-world, inference speed dan model size sama pentingnya dengan accuracy. Swin Tiny adalah optimal choice karena provides best balance.
+    
+    \item \textbf{Transfer learning is powerful:} Kedua model pre-trained dari ImageNet sangat effective untuk food classification, menunjukkan visual features learned dari natural images transfer well ke food domain.
+    
+    \item \textbf{Dataset size considerations:} Untuk dataset small-medium (~1k images, 5 classes), advanced architectures seperti Swin Tiny atau ViT Base sudah sangat capable. Tidak perlu model yang lebih besar lagi.
+    
+    \item \textbf{Hardware constraints:} Even pada mid-range laptop GPU (RTX 3050), kedua model berjalan dengan baik. Namun Swin Tiny memberikan better user experience dengan faster inference.
+\end{enumerate}
+
+\newpage
+\section{LAMPIRAN}
+
+\subsection{Informasi Repository GitHub}
+Source code lengkap proyek ini tersedia di GitHub:
+\begin{itemize}
+    \item \textbf{Repository:} \url{https://github.com/Yuuggaa/deep-learning.git}
+    \item \textbf{Struktur Proyek:}
+    \begin{itemize}
+        \item \texttt{python/}: Scripts untuk training, evaluation, dan visualization
+        \item \texttt{dataset/}: Folder untuk training data dan CSV labels
+        \item \texttt{models/}: Saved model checkpoints (.pth files)
+        \item \texttt{outputs/}: Hasil training logs, metrics, dan visualizations
+        \item \texttt{requirements.txt}: Python dependencies
+    \end{itemize}
+    \item \textbf{Key Files:}
+    \begin{itemize}
+        \item \texttt{train\_swin.py}: Training script untuk Swin Transformer
+        \item \texttt{train\_vit.py}: Training script untuk Vision Transformer
+        \item \texttt{evaluate.py}: Comprehensive evaluation dengan semua metrics
+        \item \texttt{visualize.py}: Generate learning curves
+        \item \texttt{model\_swin.py}: Swin Transformer model definition
+        \item \texttt{model\_vit.py}: ViT model definition
+        \item \texttt{dataset.py}: Custom dataset loader dengan CSV support
+    \end{itemize}
+\end{itemize}
+
+\subsection{Output Training Log - Swin Transformer}
+\begin{lstlisting}[caption=Training Progress Swin Transformer,label={lst:swin-log}]
+MODEL INFORMATION: Swin Transformer
+Total Parameters: 27,523,199
+Trainable Parameters: 27,523,199
+Non-trainable Parameters: 0
+Model Size: 106.06 MB
+
+Epoch 1/10 - Train Loss: 0.5276, Train Acc: 82.04%
+Val Loss: 0.0389, Val Acc: 99.19%
+Epoch 2/10 - Train Loss: 0.0863, Train Acc: 97.56%
+Val Loss: 0.0154, Val Acc: 99.64%
+Epoch 3/10 - Train Loss: 0.0216, Train Acc: 99.64%
+Val Loss: 0.0030, Val Acc: 100.00%
+Epoch 4/10 - Train Loss: 0.0066, Train Acc: 100.00%
+Val Loss: 0.0007, Val Acc: 100.00%
+Epoch 5/10 - Train Loss: 0.0069, Train Acc: 99.82%
+Val Loss: 0.0020, Val Acc: 99.91%
+Epoch 6/10 - Train Loss: 0.0088, Train Acc: 99.82%
+Val Loss: 0.0043, Val Acc: 99.91%
+Epoch 7/10 - Train Loss: 0.0215, Train Acc: 99.19%
+Val Loss: 0.0040, Val Acc: 99.91%
+Epoch 8/10 - Train Loss: 0.0332, Train Acc: 99.01%
+Val Loss: 0.0017, Val Acc: 100.00%
+Epoch 9/10 - Train Loss: 0.0336, Train Acc: 98.65%
+Val Loss: 0.0276, Val Acc: 99.19%
+Epoch 10/10 - Train Loss: 0.0410, Train Acc: 98.65%
+Val Loss: 0.0036, Val Acc: 99.91%
+
+Best Model: Epoch 3 with Validation Accuracy: 100.00%
+\end{lstlisting}
+
+\subsection{Output Training Log - Vision Transformer}
+\begin{lstlisting}[caption=Training Progress Vision Transformer,label={lst:vit-log}]
+MODEL INFORMATION: Vision Transformer (ViT)
+Total Parameters: 85,802,501
+Trainable Parameters: 85,802,501
+Non-trainable Parameters: 0
+Model Size: 327.31 MB
+
+Epoch 1/10 - Train Loss: 0.5580, Train Acc: 80.69%
+Val Loss: 0.2146, Val Acc: 91.88%
+Epoch 2/10 - Train Loss: 0.1460, Train Acc: 94.31%
+Val Loss: 0.0469, Val Acc: 98.65%
+Epoch 3/10 - Train Loss: 0.0648, Train Acc: 97.56%
+Val Loss: 0.0187, Val Acc: 99.46%
+Epoch 4/10 - Train Loss: 0.0182, Train Acc: 99.37%
+Val Loss: 0.0012, Val Acc: 100.00%
+Epoch 5/10 - Train Loss: 0.0012, Train Acc: 100.00%
+Val Loss: 0.0009, Val Acc: 100.00%
+Epoch 6/10 - Train Loss: 0.0016, Train Acc: 99.91%
+Val Loss: 0.0006, Val Acc: 100.00%
+Epoch 7/10 - Train Loss: 0.0237, Train Acc: 99.37%
+Val Loss: 0.1324, Val Acc: 96.12%
+Epoch 8/10 - Train Loss: 0.0862, Train Acc: 97.29%
+Val Loss: 0.0090, Val Acc: 99.55%
+Epoch 9/10 - Train Loss: 0.1410, Train Acc: 95.94%
+Val Loss: 0.0208, Val Acc: 99.64%
+Epoch 10/10 - Train Loss: 0.0350, Train Acc: 98.74%
+Val Loss: 0.0034, Val Acc: 99.91%
+
+Best Model: Epoch 4 with Validation Accuracy: 100.00%
+\end{lstlisting}
+
+\subsection{Evaluation Results Summary}
+
+\textbf{Swin Transformer Tiny:}
+\begin{lstlisting}[caption=Swin Evaluation Summary,label={lst:swin-eval}]
+EVALUATION RESULTS: Swin Transformer
+
+B. PERFORMANCE METRICS
+   Overall Accuracy: 99.91%
+   
+   Per-Class Metrics:
+   bakso:      Precision: 100.00%, Recall: 100.00%, F1: 100.00%
+   gado_gado:  Precision: 100.00%, Recall: 100.00%, F1: 100.00%
+   nasi_goreng:Precision:  99.57%, Recall: 100.00%, F1:  99.79%
+   rendang:    Precision: 100.00%, Recall: 100.00%, F1: 100.00%
+   soto_ayam:  Precision: 100.00%, Recall:  99.53%, F1:  99.76%
+   
+   Weighted Average:
+      Precision: 99.91%, Recall: 99.91%, F1-Score: 99.91%
+
+C. INFERENCE TIME
+   Average time per image: 5.11 ms
+   Total time for 1108 images: 5.66 seconds
+   Throughput: 195.62 images/second
+   Hardware: GPU: NVIDIA GeForce RTX 3050 Laptop GPU
+\end{lstlisting}
+
+\textbf{Vision Transformer Base:}
+\begin{lstlisting}[caption=ViT Evaluation Summary,label={lst:vit-eval}]
+EVALUATION RESULTS: Vision Transformer (ViT)
+
+B. PERFORMANCE METRICS
+   Overall Accuracy: 99.91%
+   
+   Per-Class Metrics:
+   bakso:      Precision: 100.00%, Recall: 100.00%, F1: 100.00%
+   gado_gado:  Precision:  99.54%, Recall: 100.00%, F1:  99.77%
+   nasi_goreng:Precision: 100.00%, Recall: 100.00%, F1: 100.00%
+   rendang:    Precision: 100.00%, Recall:  99.56%, F1:  99.78%
+   soto_ayam:  Precision: 100.00%, Recall: 100.00%, F1: 100.00%
+   
+   Weighted Average:
+      Precision: 99.91%, Recall: 99.91%, F1-Score: 99.91%
+
+C. INFERENCE TIME
+   Average time per image: 11.68 ms
+   Total time for 1108 images: 12.95 seconds
+   Throughput: 85.59 images/second
+   Hardware: GPU: NVIDIA GeForce RTX 3050 Laptop GPU
+\end{lstlisting}
+
+\subsection{Visualisasi Learning Curves}
+Visualisasi lengkap training dan validation curves untuk kedua model tersedia di:
+\begin{itemize}
+    \item \texttt{outputs/figures/swin\_training\_curve.png}
+    \item \texttt{outputs/figures/vit\_training\_curve.png}
+\end{itemize}
+
+Setiap visualisasi menampilkan 2 subplot:
+\begin{itemize}
+    \item \textbf{Loss Curve:} Training loss (blue) dan Validation loss (red) per epoch
+    \item \textbf{Accuracy Curve:} Training accuracy (blue) dan Validation accuracy (red) per epoch
+\end{itemize}
+
+\subsection{Confusion Matrices}
+Confusion matrices untuk kedua model tersedia di:
+\begin{itemize}
+    \item \texttt{outputs/figures/swin\_cm.png}
+    \item \texttt{outputs/figures/vit\_cm.png}
+\end{itemize}
+
+Matrices menunjukkan distribusi prediksi untuk setiap kelas, dengan diagonal yang sangat kuat mengindikasikan high accuracy.
+
+\newpage
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
