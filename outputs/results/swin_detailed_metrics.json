@@ -1,0 +1,91 @@
+{
+  "classification_report": {
+    "bakso": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 220.0
+    },
+    "gado_gado": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 215.0
+    },
+    "nasi_goreng": {
+      "precision": 0.9957446808510638,
+      "recall": 1.0,
+      "f1-score": 0.997867803837953,
+      "support": 234.0
+    },
+    "rendang": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 227.0
+    },
+    "soto_ayam": {
+      "precision": 1.0,
+      "recall": 0.9952830188679245,
+      "f1-score": 0.9976359338061466,
+      "support": 212.0
+    },
+    "accuracy": 0.9990974729241877,
+    "macro avg": {
+      "precision": 0.9991489361702127,
+      "recall": 0.999056603773585,
+      "f1-score": 0.9991007475288199,
+      "support": 1108.0
+    },
+    "weighted avg": {
+      "precision": 0.9991013134649357,
+      "recall": 0.9990974729241877,
+      "f1-score": 0.9990973682896969,
+      "support": 1108.0
+    }
+  },
+  "inference_metrics": {
+    "avg_time_ms": 5.111928020573695,
+    "total_time": 5.664016246795654,
+    "throughput": 195.62090780139218,
+    "num_images": 1108,
+    "hardware": "GPU: NVIDIA GeForce RTX 3050 Laptop GPU",
+    "per_class_metrics": {
+      "bakso": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 220
+      },
+      "gado_gado": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 215
+      },
+      "nasi_goreng": {
+        "precision": 0.9957446808510638,
+        "recall": 1.0,
+        "f1_score": 0.997867803837953,
+        "support": 234
+      },
+      "rendang": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 227
+      },
+      "soto_ayam": {
+        "precision": 1.0,
+        "recall": 0.9952830188679245,
+        "f1_score": 0.9976359338061466,
+        "support": 212
+      }
+    },
+    "weighted_avg": {
+      "precision": 0.9991013134649357,
+      "recall": 0.9990974729241877,
+      "f1_score": 0.9990973682896969
+    }
+  }
+}

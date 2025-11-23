@@ -36,9 +36,7 @@ dataset/
 data/
 
 # Output files
-output/
 logs/
-results/
 
 # LaTeX auxiliary files
 *.aux
