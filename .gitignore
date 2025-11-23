@@ -36,7 +36,6 @@ dataset/
 data/
 
 # Output files
-outputs/
 output/
 logs/
 results/
